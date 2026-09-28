@@ -47,6 +47,8 @@ Este documento presenta el diseño, despliegue y verificación de una infraestru
    * /jupyter/ se enruta hacia jupyter:8888 manteniendo la conexión bidireccional mediante WebSockets.
    * /grafana/ se enruta hacia grafana:3000.
 3. Aprovisionamiento y Métricas: Grafana consulta la base de datos PostgreSQL (database:5432) usando un datasource aprovisionado de forma declarativa para extraer métricas y estadísticas del sistema sin intervención manual.
+
+
 [ Cliente Web ] 
       │
       ▼ (Puerto 80 / HTTP)
@@ -66,6 +68,8 @@ Este documento presenta el diseño, despliegue y verificación de una infraestru
                  ┌────────────────────┐
                  │ PostgreSQL (db)    │
                  └────────────────────┘
+
+               
 ## Sección 2: Análisis Detallado del Modelo OSI
 
 1. Capa 7 (Aplicación)
