@@ -30,6 +30,16 @@
                       |   (Base de Datos)  |
                       +--------------------+
 
+Este documento presenta el diseño, despliegue y verificación de una infraestructura multi-contenedor basada en Docker Compose. El sistema integra un servidor web Nginx como proxy inverso, el CMS Joomla, la base de datos PostgreSQL, un entorno interactivo de JupyterLab y un tablero de monitoreo en tiempo real con Grafana.
+
+### Tabla de Credenciales del Sistema
+
+| Servicio | Ruta / Puerto URL | Usuario / Credencial | Contraseña |
+| :--- | :--- | :--- | :--- |
+| **Grafana (Monitoreo)** | `http://localhost/grafana/` | `admin` | `admin` |
+| **PostgreSQL (Base de Datos)** | `database:5432` (Interno) | `joomlauser` | `joomlapassword` |
+| **Joomla (CMS)** | `http://localhost/` | `admin` | Configurado en instalación |
+| **JupyterLab (Análisis)** | `http://localhost/jupyter/` | Token / Sin clave | `--ServerApp.base_url=/jupyter/` |
 ### Flujo de Datos y Recolección de Métricas/Logs
 1. Entrada de Tráfico: Todas las peticiones HTTP externas ingresan por la interfaz pública de nginx en el puerto 80.
 2. Enrutamiento por Prefijos:
@@ -37,7 +47,25 @@
    * /jupyter/ se enruta hacia jupyter:8888 manteniendo la conexión bidireccional mediante WebSockets.
    * /grafana/ se enruta hacia grafana:3000.
 3. Aprovisionamiento y Métricas: Grafana consulta la base de datos PostgreSQL (database:5432) usando un datasource aprovisionado de forma declarativa para extraer métricas y estadísticas del sistema sin intervención manual.
-
+[ Cliente Web ] 
+      │
+      ▼ (Puerto 80 / HTTP)
+┌────────────────────────────────────────────────────────┐
+│ Nginx (Reverse Proxy)                                  │
+└──────┬────────────────────┬────────────────────┬───────┘
+       │                    │                    │
+       ▼ (/ )               ▼ (/jupyter/)        ▼ (/grafana/)
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│ Joomla CMS   │     │ JupyterLab   │     │ Grafana      │
+└──────┬───────┘     └──────────────┘     └──────┬───────┘
+       │                                         │
+       │ (Consultas SQL)                         │ (Consultas SQL)
+       └────────────────────┬────────────────────┘
+                            │
+                            ▼ (Puerto 5432)
+                 ┌────────────────────┐
+                 │ PostgreSQL (db)    │
+                 └────────────────────┘
 ## Sección 2: Análisis Detallado del Modelo OSI
 
 1. Capa 7 (Aplicación)
