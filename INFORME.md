@@ -2,34 +2,6 @@
 
 ## Sección 1: Topología y Flujo de Información
 
-### Diagrama de Arquitectura
-
-                        [ Navegador del Usuario / Cliente ]
-                                          |
-                                 HTTP (Puerto 80:80)
-                                          v
-                              +--------------------+
-                              |       Nginx        |
-                              |  (Reverse Proxy)   |
-                              +---------+----------+
-                                       |
-               +------------------------+------------------------+
-               | (HTTP Interno)         | (WebSockets)           | (HTTP Interno)
-               v                        v                        v
-         +--------------+         +--------------+         +--------------+
-         |    Joomla    |         |   Jupyter    |         |   Grafana    |
-         |    (CMS)     |         |    (Lab)     |         |  (Paneles)   |
-         +------+-------+         +--------------+         +-------+------+
-               |                                                  |
-               | TCP: 5432                                        | Consultas SQL
-               +------------------------+-------------------------+
-                                       |
-                                       v
-                              +--------------------+
-                              |     PostgreSQL     |
-                              |   (Base de Datos)  |
-                              +--------------------+
-
 Este documento presenta el diseño, despliegue y verificación de una infraestructura multi-contenedor basada en Docker Compose. El sistema integra un servidor web Nginx como proxy inverso, el CMS Joomla, la base de datos PostgreSQL, un entorno interactivo de JupyterLab y un tablero de monitoreo en tiempo real con Grafana.
 
 ### Tabla de Credenciales del Sistema
@@ -46,28 +18,7 @@ Este documento presenta el diseño, despliegue y verificación de una infraestru
    * / se redirige internamente hacia el servicio joomla:80.
    * /jupyter/ se enruta hacia jupyter:8888 manteniendo la conexión bidireccional mediante WebSockets.
    * /grafana/ se enruta hacia grafana:3000.
-3. Aprovisionamiento y Métricas: Grafana consulta la base de datos PostgreSQL (database:5432) usando un datasource aprovisionado de forma declarativa para extraer métricas y estadísticas del sistema sin intervención manual.
-
-
-         [ Cliente Web ] 
-               │
-               ▼ (Puerto 80 / HTTP)
-         ┌────────────────────────────────────────────────────────┐
-         │ Nginx (Reverse Proxy)                                  │
-         └──────┬────────────────────┬────────────────────┬───────┘
-               │                    │                    │
-               ▼ (/ )               ▼ (/jupyter/)        ▼ (/grafana/)
-         ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-         │ Joomla CMS   │     │ JupyterLab   │     │ Grafana      │
-         └──────┬───────┘     └──────────────┘     └──────┬───────┘
-               │                                         │
-               │ (Consultas SQL)                         │ (Consultas SQL)
-               └────────────────────┬────────────────────┘
-                                    │
-                                    ▼ (Puerto 5432)
-                        ┌────────────────────┐
-                        │ PostgreSQL (db)    │
-                        └────────────────────┘
+3. Aprovisionamiento y Métricas: Grafana consulta la base de datos PostgreSQL (database:5432) usando un datasource aprovisionado de forma declarativa para extraer métricas y estadísticas del sistema sin intervención manual
 
                
 ## Sección 2: Análisis Detallado del Modelo OSI
