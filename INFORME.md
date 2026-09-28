@@ -4,31 +4,31 @@
 
 ### Diagrama de Arquitectura
 
-                 [ Navegador del Usuario / Cliente ]
-                                 |
-                          HTTP (Puerto 80:80)
-                                 v
-                      +--------------------+
-                      |       Nginx        |
-                      |  (Reverse Proxy)   |
-                      +---------+----------+
-                                |
-       +------------------------+------------------------+
-       | (HTTP Interno)         | (WebSockets)           | (HTTP Interno)
-       v                        v                        v
-+--------------+         +--------------+         +--------------+
-|    Joomla    |         |   Jupyter    |         |   Grafana    |
-|    (CMS)     |         |    (Lab)     |         |  (Paneles)   |
-+------+-------+         +--------------+         +-------+------+
-       |                                                  |
-       | TCP: 5432                                        | Consultas SQL
-       +------------------------+-------------------------+
-                                |
-                                v
-                      +--------------------+
-                      |     PostgreSQL     |
-                      |   (Base de Datos)  |
-                      +--------------------+
+                        [ Navegador del Usuario / Cliente ]
+                                          |
+                                 HTTP (Puerto 80:80)
+                                          v
+                              +--------------------+
+                              |       Nginx        |
+                              |  (Reverse Proxy)   |
+                              +---------+----------+
+                                       |
+               +------------------------+------------------------+
+               | (HTTP Interno)         | (WebSockets)           | (HTTP Interno)
+               v                        v                        v
+         +--------------+         +--------------+         +--------------+
+         |    Joomla    |         |   Jupyter    |         |   Grafana    |
+         |    (CMS)     |         |    (Lab)     |         |  (Paneles)   |
+         +------+-------+         +--------------+         +-------+------+
+               |                                                  |
+               | TCP: 5432                                        | Consultas SQL
+               +------------------------+-------------------------+
+                                       |
+                                       v
+                              +--------------------+
+                              |     PostgreSQL     |
+                              |   (Base de Datos)  |
+                              +--------------------+
 
 Este documento presenta el diseño, despliegue y verificación de una infraestructura multi-contenedor basada en Docker Compose. El sistema integra un servidor web Nginx como proxy inverso, el CMS Joomla, la base de datos PostgreSQL, un entorno interactivo de JupyterLab y un tablero de monitoreo en tiempo real con Grafana.
 
@@ -49,25 +49,25 @@ Este documento presenta el diseño, despliegue y verificación de una infraestru
 3. Aprovisionamiento y Métricas: Grafana consulta la base de datos PostgreSQL (database:5432) usando un datasource aprovisionado de forma declarativa para extraer métricas y estadísticas del sistema sin intervención manual.
 
 
-[ Cliente Web ] 
-      │
-      ▼ (Puerto 80 / HTTP)
-┌────────────────────────────────────────────────────────┐
-│ Nginx (Reverse Proxy)                                  │
-└──────┬────────────────────┬────────────────────┬───────┘
-       │                    │                    │
-       ▼ (/ )               ▼ (/jupyter/)        ▼ (/grafana/)
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│ Joomla CMS   │     │ JupyterLab   │     │ Grafana      │
-└──────┬───────┘     └──────────────┘     └──────┬───────┘
-       │                                         │
-       │ (Consultas SQL)                         │ (Consultas SQL)
-       └────────────────────┬────────────────────┘
-                            │
-                            ▼ (Puerto 5432)
-                 ┌────────────────────┐
-                 │ PostgreSQL (db)    │
-                 └────────────────────┘
+         [ Cliente Web ] 
+               │
+               ▼ (Puerto 80 / HTTP)
+         ┌────────────────────────────────────────────────────────┐
+         │ Nginx (Reverse Proxy)                                  │
+         └──────┬────────────────────┬────────────────────┬───────┘
+               │                    │                    │
+               ▼ (/ )               ▼ (/jupyter/)        ▼ (/grafana/)
+         ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+         │ Joomla CMS   │     │ JupyterLab   │     │ Grafana      │
+         └──────┬───────┘     └──────────────┘     └──────┬───────┘
+               │                                         │
+               │ (Consultas SQL)                         │ (Consultas SQL)
+               └────────────────────┬────────────────────┘
+                                    │
+                                    ▼ (Puerto 5432)
+                        ┌────────────────────┐
+                        │ PostgreSQL (db)    │
+                        └────────────────────┘
 
                
 ## Sección 2: Análisis Detallado del Modelo OSI
