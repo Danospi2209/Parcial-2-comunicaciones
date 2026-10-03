@@ -83,3 +83,26 @@ Al acceder por primera vez a http://localhost/, si el asistente de instalación 
    * Acceder a http://localhost/jupyter/.
    * Abrir el cuaderno analisis_datos.ipynb dentro de la carpeta de trabajo.
    * Ejecutar las celdas de Python comprobando la correcta ejecución del código.
+
+   ### Anexo: Reconfiguración Manual de la Fuente de Datos (Data Source) en Grafana
+
+En caso de que el origen de datos (*Data Source*) aprovisionado por defecto presente problemas de autenticación (por ejemplo, el error `failed SASL auth: FATAL: password authentication failed` al intentar validar credenciales por defecto de Grafana como `admin`[cite: 9]), se debe verificar o reconfigurar manualmente la conexión desde la interfaz web.
+
+#### Pasos para la creación y validación manual:
+
+1. Iniciar sesión en Grafana (`http://localhost/grafana/`) con las credenciales `admin` / `admin`.
+2. En el menú lateral izquierdo, ingresar a **Connections** > **Data sources**.
+3. Si el Data Source existente presenta fallas de conexión, seleccionar **Add new data source** y elegir **PostgreSQL**.
+4. Diligenciar los campos del formulario con los siguientes parámetros exactos:
+
+| Campo / Parámetro | Valor Requerido | Observación |
+| :--- | :--- | :--- |
+| **Name** | `PostgreSQL` | Identificador del origen de datos |
+| **Host URL** | `database:5432` | Nombre del servicio del contenedor de la BD y puerto interno |
+| **Database name** | `joomla_db` | Base de datos relacional de la aplicación |
+| **Username** | `joomlauser` | Usuario configurado en PostgreSQL (**NO** usar `admin`)[cite: 9] |
+| **Password** | `joomlapassword` | Contraseña asignada a la base de datos |
+| **TLS/SSL Mode** | `disable` | Desactivar cifrado SSL para la comunicación interna entre contenedores |
+| **Version** | `13.0+` | Compatible con la versión de PostgreSQL desplegada (`postgres:16-alpine`) |
+
+5. Hacer clic en el botón **Save & test**. El sistema debe arrojar la confirmación en verde: *"Database Connection OK"*.
