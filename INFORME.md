@@ -53,6 +53,24 @@ Este documento presenta el diseño, despliegue y verificación de una infraestru
 
 ## Sección 3: Guía de Verificación y Demostración
 
+### Instrucciones de Despliegue e Instalación Inicial de Joomla
+Para que cualquier usuario despliegue el proyecto desde cero, debe ejecutar:
+
+git clone [https://github.com/Danospi2209/Parcial-2-comunicaciones.git](https://github.com/Danospi2209/Parcial-2-comunicaciones.git)
+cd Parcial-2-comunicaciones
+docker compose up -d
+### Configuración de la Base de Datos en Joomla
+Al acceder por primera vez a http://localhost/, si el asistente de instalación de Joomla solicita los parámetros de conexión a la base de datos, deben ingresarse los siguientes datos exactos:
+
+
+| Parámetro | Valor Requerido | Observación |
+| :--- | :--- | :--- |
+| **Tipo de base de datos** | `PostgreSQL` | Cambiar la opción por defecto (`MySQLi`) |
+| **Hospedador (Host)** | `database` | Nombre del contenedor en Docker (NO usar `localhost`) |
+| **Usuario** | `joomlauser` | Usuario configurado en PostgreSQL |
+| **Contraseña** | `joomlapassword` | Contraseña configurada en PostgreSQL |
+| **Nombre de la base de datos** | `joomla_db` | Nombre de la base de datos del proyecto |
+
 1. Verificación del Portal Joomla
    * Acceder a http://localhost desde el navegador.
    * Interactuar con el sitio para generar tráfico HTTP y consultas internas hacia la base de datos PostgreSQL.
